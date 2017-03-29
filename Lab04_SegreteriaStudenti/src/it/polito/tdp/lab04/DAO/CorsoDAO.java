@@ -1,21 +1,13 @@
 package it.polito.tdp.lab04.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import it.polito.tdp.lab04.model.Corso;
 import it.polito.tdp.lab04.model.Studente;
 
 public class CorsoDAO {
-
-	/*
-	 * Ottengo tutti i corsi salvati nel Db
-	 */
+	
 	public List<Corso> getTuttiICorsi() {
 
 		final String sql = "SELECT * FROM corso";
@@ -30,14 +22,19 @@ public class CorsoDAO {
 
 			while (rs.next()) {
 
-				// Crea un nuovo JAVA Bean Corso
-				// Aggiungi il nuovo Corso alla lista
+				String codins = rs.getString("codins");
+				int crediti = rs.getInt("crediti");
+				String nome = rs.getString("nome");
+				int pd = rs.getInt("pd");
+				
+				Corso c = new Corso(codins, crediti, nome, pd);
+				
+				corsi.add(c);
 			}
-
+			conn.close();
 			return corsi;
 
 		} catch (SQLException e) {
-			// e.printStackTrace();
 			throw new RuntimeException("Errore Db");
 		}
 	}

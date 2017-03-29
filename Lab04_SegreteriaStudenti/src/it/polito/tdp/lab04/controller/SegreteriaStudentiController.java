@@ -1,8 +1,12 @@
+/**
+ * Sample Skeleton for 'SegreteriaStudenti.fxml' Controller Class
+ */
+
 package it.polito.tdp.lab04.controller;
 
-import java.util.Collections;
-import java.util.LinkedList;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import it.polito.tdp.lab04.model.Corso;
 import it.polito.tdp.lab04.model.Model;
@@ -10,86 +14,125 @@ import it.polito.tdp.lab04.model.Studente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class SegreteriaStudentiController {
-
-	private Model model;
-	List<Corso> corsi = new LinkedList<Corso>();
-
-	@FXML
-	private ComboBox<Corso> comboCorso;
-
-	@FXML
-	private Button btnCercaIscrittiCorso;
-
-	@FXML
-	private Button btnCercaCorsi;
-
-	@FXML
-	private Button btnCercaNome;
-
-	@FXML
-	private TextArea txtResult;
-
-	@FXML
-	private Button btnIscrivi;
-
-	@FXML
-	private TextField txtMatricola;
-
-	@FXML
-	private Button btnReset;
-
-	@FXML
-	private TextField txtNome;
-
-	@FXML
-	private TextField txtCognome;
-
-	public void setModel(Model model) {
-
+	
+	Model model;
+	
+	public void setModel(Model m){
+		
+		this.model = m;
+		comboCorso.getItems().addAll(model.getCorsi());
 	}
 
-	@FXML
-	void doReset(ActionEvent event) {
+    @FXML // ResourceBundle that was given to the FXMLLoader
+    private ResourceBundle resources;
 
-	}
+    @FXML // URL location of the FXML file that was given to the FXMLLoader
+    private URL location;
 
-	@FXML
-	void doCercaNome(ActionEvent event) {
+    @FXML // fx:id="comboCorso"
+    private ComboBox<Corso> comboCorso; // Value injected by FXMLLoader
 
-	}
+    @FXML // fx:id="btnCercaIscrittiCorso"
+    private Button btnCercaIscrittiCorso; // Value injected by FXMLLoader
 
-	@FXML
-	void doCercaIscrittiCorso(ActionEvent event) {
+    @FXML // fx:id="txtMatricola"
+    private TextField txtMatricola; // Value injected by FXMLLoader
 
-	}
+    @FXML // fx:id="btnCercaNome"
+    private CheckBox btnCercaNome; // Value injected by FXMLLoader
 
-	@FXML
-	void doCercaCorsi(ActionEvent event) {
+    @FXML // fx:id="txtNome"
+    private TextField txtNome; // Value injected by FXMLLoader
 
-	}
+    @FXML // fx:id="txtCognome"
+    private TextField txtCognome; // Value injected by FXMLLoader
 
-	@FXML
-	void doIscrivi(ActionEvent event) {
+    @FXML // fx:id="btnCercaCorsi"
+    private Button btnCercaCorsi; // Value injected by FXMLLoader
 
-	}
+    @FXML // fx:id="btnIscrivi"
+    private Button btnIscrivi; // Value injected by FXMLLoader
 
-	@FXML
-	void initialize() {
-		assert comboCorso != null : "fx:id=\"comboCorso\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert btnCercaIscrittiCorso != null : "fx:id=\"btnCercaIscrittiCorso\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert btnCercaCorsi != null : "fx:id=\"btnCercaCorsi\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert btnCercaNome != null : "fx:id=\"btnCercaNome\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert txtNome != null : "fx:id=\"txtNome\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert txtCognome != null : "fx:id=\"txtCognome\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert btnIscrivi != null : "fx:id=\"btnIscrivi\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert txtMatricola != null : "fx:id=\"txtMatricola\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-		assert btnReset != null : "fx:id=\"btnReset\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
-	}
+    @FXML // fx:id="txtResult"
+    private TextArea txtResult; // Value injected by FXMLLoader
 
+    @FXML // fx:id="btnReset"
+    private Button btnReset; // Value injected by FXMLLoader
+
+    @FXML
+    void doCercaCorsi(ActionEvent event) {
+
+    }
+
+    @FXML
+    void doCercaIscrittiCorso(ActionEvent event) {
+    	
+    	if(comboCorso.getValue()==null){
+    		txtResult.setText("Scegliere corso nel menu a tendina"); 
+    		return;
+    	}
+    	
+    	List<Studente> st = model.getStudentiIscritti(comboCorso.getValue());
+
+    	if(st.size()==0){
+    		txtResult.setText("Nessuno studente frequenta questo corso"); 
+    		return;
+    	}
+    	
+    	for(Studente s : st){
+    		txtResult.appendText(s.toString());
+    	}
+    }
+
+    @FXML
+    void doCercaNome(ActionEvent event) {
+    	
+    	if(txtMatricola.getText().matches("[0-9]+")==false){
+    		txtResult.setText("Inserimento matricola errato");
+    		txtMatricola.clear();
+    		return;
+    	}
+    	
+    	int matricola = Integer.parseInt(txtMatricola.getText());
+    	if(model.getStudente(matricola)!=null){
+    		
+    		txtNome.setText(model.getStudente(matricola).getNome());
+    		txtCognome.setText(model.getStudente(matricola).getCognome());
+    	}
+    	else {
+    		
+    		txtResult.setText("Studente non trovato");
+    	}
+    }
+
+    @FXML
+    void doIscrivi(ActionEvent event) {
+
+    }
+
+    @FXML
+    void doReset(ActionEvent event) {
+
+    }
+
+    @FXML // This method is called by the FXMLLoader when initialization is complete
+    void initialize() {
+        assert comboCorso != null : "fx:id=\"comboCorso\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert btnCercaIscrittiCorso != null : "fx:id=\"btnCercaIscrittiCorso\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert txtMatricola != null : "fx:id=\"txtMatricola\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert btnCercaNome != null : "fx:id=\"btnCercaNome\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert txtNome != null : "fx:id=\"txtNome\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert txtCognome != null : "fx:id=\"txtCognome\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert btnCercaCorsi != null : "fx:id=\"btnCercaCorsi\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert btnIscrivi != null : "fx:id=\"btnIscrivi\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        assert btnReset != null : "fx:id=\"btnReset\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+        
+    }
 }
