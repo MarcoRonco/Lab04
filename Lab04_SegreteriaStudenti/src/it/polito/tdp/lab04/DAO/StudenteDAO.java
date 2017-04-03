@@ -1,42 +1,73 @@
 package it.polito.tdp.lab04.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
-import it.polito.tdp.lab04.model.Studente;
+import it.polito.tdp.lab04.model.*;
 
 public class StudenteDAO {
 
-	public List<Studente> getTuttiStudenti() {
+	public Studente getStudente(int matricola) {
 
-		final String sql = "SELECT * FROM studente";
+		final String sql = "SELECT * FROM studente WHERE matricola=?";
 
-		List<Studente> studenti = new LinkedList<Studente>();
+		Studente s = null;
 
 		try {
+			
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
-
+			st.setInt(1, matricola);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
-
-				int matricola = rs.getInt("matricola");
+				
 				String cognome = rs.getString("cognome");
 				String nome = rs.getString("nome");
 				String cds = rs.getString("CDS");
 				
-				Studente s = new Studente(matricola, cognome, nome, cds);
-				
-				studenti.add(s);
+				s = new Studente(matricola, cognome, nome, cds);
 			}
 			
 			conn.close();
-			return studenti;
+			return s;
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Errore Db");
+		}
+	}
+	
+	public List<Corso> getCorsiStudente(int matricola) {
+		
+		final String sql = "SELECT corso.codins, corso.crediti, corso.nome, corso.pd "+
+                           "FROM studente, iscrizione, corso "+
+                           "WHERE studente.matricola=iscrizione.matricola "+
+                           "AND corso.codins = iscrizione.codins "+
+                           "AND iscrizione.matricola = ?";
+		
+		List<Corso> c = new ArrayList<Corso>();
+		
+		try {
+			
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, matricola);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				
+				String codins = rs.getString("codins");
+				int crediti = rs.getInt("crediti");
+				String nome = rs.getString("nome");
+				int pd = rs.getInt("pd");
+				
+				Corso co = new Corso(codins, crediti, nome, pd);
+				
+				c.add(co);
+			}
+			
+			conn.close();
+			return c;
 
 		} catch (SQLException e) {
 			throw new RuntimeException("Errore Db");

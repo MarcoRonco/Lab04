@@ -2,55 +2,39 @@ package it.polito.tdp.lab04.model;
 
 import java.util.*;
 
-import it.polito.tdp.lab04.DAO.CorsoDAO;
-import it.polito.tdp.lab04.DAO.IscrittiDAO;
-import it.polito.tdp.lab04.DAO.StudenteDAO;
+import it.polito.tdp.lab04.DAO.*;
 
 public class Model {
 
-	CorsoDAO cDAO = new CorsoDAO();
-	Map<String, Corso> corsi = new HashMap<String, Corso>();
+	private CorsoDAO cDAO = new CorsoDAO();
 	
 	private StudenteDAO sDAO = new StudenteDAO();
-	Map<Integer, Studente> studenti = new HashMap<Integer, Studente>();
 	
 	private IscrittiDAO iDAO = new IscrittiDAO();
 	
-	public Model(){
-         
-		for(Corso f : cDAO.getTuttiICorsi()){
-			
-			corsi.put(f.getCodins(), f);
-		}
-		
-        for(Studente f : sDAO.getTuttiStudenti()){
-			
-			studenti.put(f.getMatricola(), f);
-		}
-       
-	}
+	public Model(){}
 	
     public List<Corso> getCorsi(){
-		
 		return cDAO.getTuttiICorsi();
 	}
     
     public Studente getStudente(int matricola){
-    	return studenti.get(matricola);
+    	return sDAO.getStudente(matricola);
     }
 	
     public List<Studente> getStudentiIscritti(Corso c){
-    	
-    	List<Studente> s = new ArrayList<Studente>();
-    	
-    	for(Iscritti i : iDAO.getTuttiIscritti()){
-    		
-    		if(i.getCorso().compareTo(c.getCodins())==0){
-    			
-    			s.add(studenti.get(i.getStudenti()));
-    		}
-    	}
-    	
-    	return s;
+    	return iDAO.getTuttiIscritti(c.getCodins());
     }
+   
+    public List<Corso> getCorsiStudente(int matricola){
+    	return sDAO.getCorsiStudente(matricola);
+    }
+    
+    public void inscriviStudenteACorso(Studente studente, Corso corso){
+    	 cDAO.inscriviStudenteACorso(studente, corso);
+    }
+    
+    public boolean iscritto(Studente studente, Corso corso){
+   	 return cDAO.iscritto(studente, corso);
+   }
 }

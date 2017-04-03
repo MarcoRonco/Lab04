@@ -1,37 +1,37 @@
 package it.polito.tdp.lab04.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
-import it.polito.tdp.lab04.model.Iscritti;
-import it.polito.tdp.lab04.model.Studente;
+import it.polito.tdp.lab04.model.*;
 
 public class IscrittiDAO {
 
-	public List<Iscritti> getTuttiIscritti() {
+	public List<Studente> getTuttiIscritti(String codins) {
 
-		final String sql = "SELECT * FROM iscritti";
+		final String sql = "SELECT studente.matricola, cognome, nome, CDS "+
+						   "FROM studente, iscrizione "+
+						   "WHERE studente.matricola=iscrizione.matricola "+ 
+						   "AND iscrizione.codins = ?";
 
-		List<Iscritti> iscritti = new LinkedList<Iscritti>();
+		List<Studente> iscritti = new ArrayList<Studente>();
 
 		try {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
-
+			st.setString(1, codins);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 
 				int matricola = rs.getInt("matricola");
-				String codins = rs.getString("codins");
+				String cognome = rs.getString("cognome");
+				String nome = rs.getString("nome");
+				String cds = rs.getString("CDS");
 				
-				Iscritti i = new Iscritti(codins, matricola);
+				Studente s = new Studente(matricola, cognome, nome, cds);
 				
-				iscritti.add(i);
+				iscritti.add(s);
 			}
 			
 			conn.close();

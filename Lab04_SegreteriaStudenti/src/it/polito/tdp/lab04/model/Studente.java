@@ -8,7 +8,6 @@ public class Studente {
 	private String cds;
 	
 	public Studente(int matricola, String cognome, String nome, String cds) {
-		super();
 		this.matricola = matricola;
 		this.cognome = cognome;
 		this.nome = nome;
@@ -71,7 +70,7 @@ public class Studente {
 
 	@Override
 	public String toString() {
-		return "" + matricola + "  " + cognome + "  " + nome + "  " + cds;
+		return matricola + "  " + cognome + "  " + nome + "  " + cds;
 	}
 	
 	

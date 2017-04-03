@@ -67,11 +67,32 @@ public class SegreteriaStudentiController {
 
     @FXML
     void doCercaCorsi(ActionEvent event) {
-
+    	
+    	txtResult.clear();
+    	
+    	if(txtMatricola.getText().matches("[0-9]+")==false){
+    		txtResult.setText("Inserimento matricola errato");
+    		txtMatricola.clear();
+    		return;
+    	}
+    	
+    	int matricola = Integer.parseInt(txtMatricola.getText());
+    	if(model.getStudente(matricola)!=null){
+    		
+    		for(Corso ci :model.getCorsiStudente(matricola)){
+    			txtResult.appendText(ci.toString()+'\n');
+    		}
+    	}
+    	else {
+    		
+    		txtResult.setText("Studente non trovato");
+    	}
     }
 
     @FXML
     void doCercaIscrittiCorso(ActionEvent event) {
+    	
+    	txtResult.clear();
     	
     	if(comboCorso.getValue()==null){
     		txtResult.setText("Scegliere corso nel menu a tendina"); 
@@ -86,12 +107,14 @@ public class SegreteriaStudentiController {
     	}
     	
     	for(Studente s : st){
-    		txtResult.appendText(s.toString());
+    		txtResult.appendText(s.toString()+'\n');
     	}
     }
 
     @FXML
     void doCercaNome(ActionEvent event) {
+    	
+    	txtResult.clear();
     	
     	if(txtMatricola.getText().matches("[0-9]+")==false){
     		txtResult.setText("Inserimento matricola errato");
@@ -114,11 +137,49 @@ public class SegreteriaStudentiController {
     @FXML
     void doIscrivi(ActionEvent event) {
 
+    	txtResult.clear();
+    	
+    	if(txtMatricola.getText().matches("[0-9]+")==false){
+    		txtResult.setText("Inserimento matricola errato");
+    		txtMatricola.clear();
+    		return;
+    	}
+    	
+    	int matricola = Integer.parseInt(txtMatricola.getText());
+    	if(model.getStudente(matricola)!=null){
+    		
+    		if(comboCorso.getValue()==null){
+        		txtResult.setText("Scegliere corso nel menu a tendina"); 
+        		return;
+        	}
+    		
+    		if(model.iscritto(model.getStudente(matricola), comboCorso.getValue())==true){
+    			
+        		txtResult.setText("Studente gia iscritto a questo corso"); 
+        		return;
+    			
+    		}else{
+    			
+    			model.inscriviStudenteACorso(model.getStudente(matricola), comboCorso.getValue());
+    			txtResult.setText("DB aggiornato: studente inserito nel corso"); 
+        		return;
+    		}
+    		
+    	}
+    	else {
+    		
+    		txtResult.setText("Studente non trovato");
+    	}
+    	
     }
 
     @FXML
     void doReset(ActionEvent event) {
-
+    	
+    	txtResult.clear();
+    	txtMatricola.clear();
+    	txtCognome.clear();
+    	txtNome.clear();
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
